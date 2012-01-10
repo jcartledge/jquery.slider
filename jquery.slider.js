@@ -25,8 +25,9 @@
     // `f` is a function which returns the new position.
     function move(f) {
 
-      var pos    = this.data('position') || settings.start
-        , newPos = f(pos)
+      var pos     = this.data('position') || settings.start
+        , newPos  = f(pos)
+        , buttons = this.data('buttons')
       ;
 
       if(pos == newPos) return;
@@ -39,13 +40,17 @@
       ;
 
       // Update button classes:
-      itemControlContainer.children('.' + settings.cssPrefix + 'goto')
-        .removeClass('active')
-      ;
+      if(buttons) {
 
-      itemControlContainer.children('.' + settings.cssPrefix + 'goto-' + newPos)
-        .addClass('active')
-      ;
+        buttons.children('.' + settings.cssPrefix + 'goto')
+          .removeClass('active')
+        ;
+
+        buttons.children('.' + settings.cssPrefix + 'goto-' + newPos)
+          .addClass('active')
+        ;
+
+      }
 
       // Trigger an event so subscribers can update the view when it changes:
       this.trigger('sliderChanged', [newPos, pos]);
@@ -65,7 +70,7 @@
 
         if(settings.controls.prev) {
           $('<button class="' + settings.cssPrefix + 'prev"/>')
-            .html(settings.control.prev)
+            .html(settings.controls.prev)
             .click(function() {
               move.call($slider, function(pos) {
                 return Math.max(pos - 1, settings.start);
@@ -77,7 +82,7 @@
 
         if(settings.controls.next) {
           $('<button class="' + settings.cssPrefix + 'next"/>')
-            .html(settings.control.next)
+            .html(settings.controls.next)
             .click(function() {
               move.call($slider, function(pos) {
                 return Math.min(pos + 1, positions - 1 + settings.start);
@@ -112,6 +117,7 @@
           }
 
           itemControlContainer.insertAfter($slider);
+          $slider.data('buttons', itemControlContainer);
           $('.' + settings.cssPrefix + 'goto-' + settings.start).addClass('active');
 
         }
@@ -125,7 +131,5 @@
 
   }
 
-
-
-
 })(jQuery);
+

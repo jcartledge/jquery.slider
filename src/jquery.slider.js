@@ -30,7 +30,6 @@
           buttons = this.data('buttons');
 
       if(pos == newPos) return;
-
       // Update data-position and position class on container:
       this
         .data('position', newPos)
@@ -60,8 +59,13 @@
     this.each(function() {
 
       var $slider = $(this),
-          positions = $slider.data('positions') || $slider.find(itemSelector).length;
+          positions = $slider.data('positions') || $slider.find(settings.itemSelector).length;
       if($slider.data('slider-processed')) return;
+
+      // Set position on the slider if it;s undefined
+      if($slider.data('position') === undefined) {
+        $slider.data('position', settings.startIndex);
+      }
 
       // Add controls to the slider:
       if(positions > 1) {

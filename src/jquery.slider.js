@@ -6,15 +6,26 @@
 
 (function($) {
 
+  // Add a utility to test if a value is numeric.
+  // (Don't redefine this if there alreadyis one - just assume that works)
+  if(typeof $.util == 'undefined') {
+    $.util = {};
+  }
+  if(typeof $.util.isNumeric != 'function') {
+    $.util.isNumeric = function(testVal) {
+      return !isNaN(parseFloat(testVal)) && isFinite(testVal);
+    };
+  }
+
   $.fn.slider = function(options) {
 
     // Settings can be overridden by passing in `options` object.
     // If you don't want a particular control set it to `false`.
     var settings =  $.extend(true, {
       controls : {
-        prev       : '◀',
-        next       : '▶',
-        item       : '⚫'
+        prev       : 'previous',
+        next       : 'next',
+        item       : '0'
       },
       itemSelector : 'li',
       cssPrefix    : 'slider-',
@@ -62,10 +73,13 @@
           positions = $slider.data('positions') || $slider.find(settings.itemSelector).length;
       if($slider.data('slider-processed')) return;
 
-      // Set position on the slider if it;s undefined
+      // Set data.position on the slider if it's undefined.
       if($slider.data('position') === undefined) {
         $slider.data('position', settings.startIndex);
       }
+
+      // Ensure data.positions is set on the slider.
+      $slider.data('positions', positions);
 
       // Add controls to the slider:
       if(positions > 1) {
@@ -109,7 +123,9 @@
 
           while(position < positions + settings.startIndex) {
             $('<button>')
-              .html(settings.controls.item)
+              .html($.util.isNumeric(settings.controls.item) ?
+                  position.toString() :
+                  settings.controls.item)
               .addClass(settings.cssPrefix + 'goto')
               .addClass(settings.cssPrefix + 'goto-' + position)
               .data('position', position)

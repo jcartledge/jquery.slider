@@ -18,17 +18,16 @@
       },
       itemSelector : 'li',
       cssPrefix    : 'slider-',
-      start        : 0
+      startIndex        : 0
     }, options);
 
     // Handler to update the slider when a control is clicked.
     // `f` is a function which returns the new position.
     function move(f) {
 
-      var pos     = this.data('position') || settings.start
-        , newPos  = f(pos)
-        , buttons = this.data('buttons')
-      ;
+      var pos     = this.data('position') || settings.startIndex,
+          newPos  = f(pos),
+          buttons = this.data('buttons');
 
       if(pos == newPos) return;
 
@@ -60,9 +59,8 @@
     // Set up the sliders:
     this.each(function() {
 
-      var $slider = $(this)
-        , positions = $slider.data('positions') || $slider.find(itemSelector).length
-      ;
+      var $slider = $(this),
+          positions = $slider.data('positions') || $slider.find(itemSelector).length;
       if($slider.data('slider-processed')) return;
 
       // Add controls to the slider:
@@ -73,7 +71,7 @@
             .html(settings.controls.prev)
             .click(function() {
               move.call($slider, function(pos) {
-                return Math.max(pos - 1, settings.start);
+                return Math.max(pos - 1, settings.startIndex);
               });
             })
             .insertBefore($slider)
@@ -85,7 +83,7 @@
             .html(settings.controls.next)
             .click(function() {
               move.call($slider, function(pos) {
-                return Math.min(pos + 1, positions - 1 + settings.start);
+                return Math.min(pos + 1, positions - 1 + settings.startIndex);
               });
             })
             .insertBefore($slider)
@@ -95,22 +93,23 @@
 
         if(settings.controls.item) {
 
-          var itemControlContainer = $('<div>')
-            , position = settings.start
+          var itemControlContainer = $('<div>'),
+              position = settings.startIndex,
+              clickHandler = function() {
+                var btn = $(this);
+                move.call($slider, function() {
+                  return btn.data('position');
+                });
+              }
           ;
 
-          while(position < positions + settings.start) {
+          while(position < positions + settings.startIndex) {
             $('<button>')
               .html(settings.controls.item)
               .addClass(settings.cssPrefix + 'goto')
               .addClass(settings.cssPrefix + 'goto-' + position)
               .data('position', position)
-              .click(function() {
-                var btn = $(this);
-                move.call($slider, function() {
-                  return btn.data('position');
-                })
-              })
+              .click(clickHandler)
               .appendTo(itemControlContainer)
             ;
             position++;
@@ -118,7 +117,8 @@
 
           itemControlContainer.insertAfter($slider);
           $slider.data('buttons', itemControlContainer);
-          $('.' + settings.cssPrefix + 'goto-' + settings.start).addClass('active');
+          $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
+            .addClass('active');
 
         }
       }
@@ -129,7 +129,7 @@
 
     return this;
 
-  }
+  };
 
 })(jQuery);
 

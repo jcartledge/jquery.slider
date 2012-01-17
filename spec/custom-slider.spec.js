@@ -2,7 +2,7 @@
 describe('Slider with custom options', function() {
 
   var sliderContainer,
-      options;
+      options = {};
 
   beforeEach(function() {
     sliderContainer = $('<div class="slider"><div>1</div><div>2</div><div>3</div><div>4</div></ul>')
@@ -20,15 +20,26 @@ describe('Slider with custom options', function() {
     $(controlClasses).remove();
   });
 
-  it('should match a custom itemSelector', function() {
-    sliderContainer.slider(options);
-    expect(sliderContainer).toHaveData('positions', 4);
+  describe('Overriding the item selector', function() {
+
+    it('should match a custom itemSelector', function() {
+      sliderContainer.slider(options);
+      expect(sliderContainer).toHaveData('positions', 4);
+    });
+
   });
 
-  it('should allow the classname prefix to be overridden', function() {
-    options.cssPrefix = 'mySlider-';
-    sliderContainer.slider(options);
-    expect($('.mySlider-goto')).toExist();
+  describe('Overriding the CSS prefix', function() {
+
+    beforeEach(function() {
+      options.cssPrefix = 'mySlider-';
+      sliderContainer.slider(options);
+    });
+
+    it('should allow the classname prefix to be overridden', function() {
+      expect($('.mySlider-goto')).toExist();
+    });
+
   });
 
   describe('Overriding the startIndex', function() {
@@ -54,48 +65,52 @@ describe('Slider with custom options', function() {
 
   });
 
-  describe('Defining custom labels', function() {
+  describe('Removing controls', function() {
 
-    describe('Removing the previous control', function() {
-
-      beforeEach(function() {
-        options.controls = {
-          previous: false
-        };
-      });
-
-      it('should not have a previous button', function() {
-        expect($('.slider-prev').length).toBe(0);
-      });
-
+    beforeEach(function() {
+      options.controls = {
+        prev: false,
+        next: false,
+        item: false
+      };
+      sliderContainer.slider(options);
     });
 
-    describe('Removing the next control', function() {
-
-      beforeEach(function() {
-        options.controls = {
-          next: false
-        };
-      });
-
-      it('should not have a next button', function() {
-        expect($('.slider-next').length).toBe(0);
-      });
-
+    it('should not have a previous button', function() {
+      expect($('.slider-prev').length).toBe(0);
     });
 
-    describe('Removing the item controls', function() {
+    it('should not have a next button', function() {
+      expect($('.slider-next').length).toBe(0);
+    });
 
-      beforeEach(function() {
-        options.controls = {
-          item: false
-        };
-      });
+    it('should not have item controls', function() {
+      expect($('.slider-goto').length).toBe(0);
+    });
 
-      it('should not have item controls', function() {
-        expect($('.slider-goto').length).toBe(0);
-      });
+  });
 
+  describe('Overriding control labels', function() {
+
+    beforeEach(function() {
+      options.controls = {
+        prev: '◀',
+        next: '▶',
+        item: '⚫'
+      };
+      sliderContainer.slider(options);
+    });
+
+    it('should no longer have a default previous button', function() {
+      expect($('.slider-prev')).toHaveText(options.controls.prev);
+    });
+
+    it('should no longer have a default next button', function() {
+      expect($('.slider-next')).toHaveText(options.controls.next);
+    });
+
+    it('should no longer have a default item button', function() {
+      expect($('.slider-goto').first()).toHaveText(options.controls.item);
     });
 
   });

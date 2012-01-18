@@ -132,10 +132,28 @@
 
     // Set active class on active item(s)
     function setActiveClass($slider) {
-      $slider.find(settings.itemSelector)
-        .removeClass(settings.cssPrefix + 'active');
-      $($slider.find(settings.itemSelector).get($slider.data('position')))
-        .addClass(settings.cssPrefix + 'active');
+
+      var items = $slider.find(settings.itemSelector),
+          positions = $slider.data('positions'),
+          position = $slider.data('position');
+
+      items.removeClass(settings.cssPrefix + 'active');
+
+      if(positions == items.length) {
+        $(items.get(position)).addClass(settings.cssPrefix + 'active');
+      } else {
+        var itemsPerPosition = Math.ceil(items.length / positions),
+            start = position * itemsPerPosition,
+            end = start + itemsPerPosition;
+        items.slice(start, end)
+          .addClass(settings.cssPrefix + 'active')
+          .each(function(i, e) {
+            var className = settings.cssPrefix + 'active-' + i;
+            items.removeClass(className);
+            $(this).addClass(className);
+          });
+      }
+
     }
 
     // Set up the sliders:
@@ -168,11 +186,11 @@
         $slider.data('position', settings.startIndex);
       }
 
-      // Set slider-active class on active item(s)
-      setActiveClass($slider);
-
       // Ensure data.positions is set on the slider.
       $slider.data('positions', positions);
+
+      // Set slider-active class on active item(s)
+      setActiveClass($slider);
 
       // Add controls to the slider:
       if(positions > 1) {

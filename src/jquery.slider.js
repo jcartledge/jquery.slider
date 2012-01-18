@@ -21,17 +21,25 @@
 
     // Settings can be overridden by passing in `options` object.
     // If you don't want a particular control set it to `false`.
-    var settings =  $.extend(true, {
-      controls : {
-        prev       : 'previous',
-        next       : 'next',
-        item       : '0'
-      },
-      itemSelector : 'li',
-      cssPrefix    : 'slider-',
-      startIndex   : 0,
-      loop         : false
-    }, options);
+
+    if(typeof options === 'object' || typeof options === 'undefined') {
+      var settings =  $.extend(true, {
+        controls     : {
+          prev       : 'previous',
+          next       : 'next',
+          item       : '0'
+        },
+        auto         : {
+          enabled    : false,
+          start      : true,
+          timeout    : 5000
+        },
+        itemSelector : 'li',
+        cssPrefix    : 'slider-',
+        startIndex   : 0,
+        loop         : false
+      }, options);
+    }
 
     // Handler to update the slider when a control is clicked.
     // `f` is a function which returns the new position.
@@ -67,12 +75,77 @@
 
     }
 
+    // Return a function to move the slider one position forward.
+    function forward_func($slider) {
+      return function() {
+        var positions = $slider.data('positions');
+        move.call($slider, function(pos) {
+          var newPos = Math.min(pos + 1, positions - 1 + settings.startIndex);
+          if(settings.loop && (pos == newPos)) {
+            newPos = settings.startIndex;
+          }
+          return newPos;
+        });
+      };
+    }
+
+    // Return a function to move the slider backwards one position.
+    function backward_func($slider) {
+      return function() {
+        var positions = $slider.data('positions');
+        move.call($slider, function(pos) {
+          var newPos = Math.max(pos - 1, settings.startIndex);
+          if(settings.loop && (pos == newPos)) {
+            newPos = positions - 1 + settings.startIndex;
+          }
+          return newPos;
+        });
+      };
+    }
+
+    // Return a function to start the slider animating
+    function start_func($slider) {
+      return function() {
+        if(!settings.auto.enabled) {
+          return;
+        }
+        var callback = forward_func($slider);
+        stop_func($slider)();
+        $slider.data('timeout', setInterval(callback, settings.auto.timeout));
+      };
+    }
+
+    // Return a function to stop the slider animating
+    function stop_func($slider) {
+      return function() {
+        clearTimeout($slider.data('timeout'));
+      };
+    }
+
     // Set up the sliders:
     this.each(function() {
 
       var $slider = $(this),
           positions = $slider.data('positions') || $slider.find(settings.itemSelector).length;
-      if($slider.data('slider-processed')) return;
+
+      // respond to commands like stop and start after the slider has been set up.
+      if($slider.data('slider-processed')) {
+        settings = $slider.data('slider-settings');
+        switch(options) {
+          case 'start':
+            start_func($slider)();
+            break;
+          case 'stop':
+            stop_func($slider)();
+            break;
+        }
+        return;
+      }
+
+      // Store settings on the slider so we can do stuff to it later
+      if($slider.data('slider-settings') === undefined) {
+        $slider.data('slider-settings', settings);
+      }
 
       // Set data.position on the slider if it's undefined.
       if($slider.data('position') === undefined) {
@@ -88,15 +161,7 @@
         if(settings.controls.prev) {
           $('<button class="' + settings.cssPrefix + 'prev"/>')
             .html(settings.controls.prev)
-            .click(function() {
-              move.call($slider, function(pos) {
-                var newPos = Math.max(pos - 1, settings.startIndex);
-                if(settings.loop && (pos == newPos)) {
-                  newPos = positions - 1 + settings.startIndex;
-                }
-                return newPos;
-              });
-            })
+            .click(backward_func($slider))
             .insertBefore($slider)
           ;
         }
@@ -104,20 +169,10 @@
         if(settings.controls.next) {
           $('<button class="' + settings.cssPrefix + 'next"/>')
             .html(settings.controls.next)
-            .click(function() {
-              move.call($slider, function(pos) {
-                var newPos = Math.min(pos + 1, positions - 1 + settings.startIndex);
-                if(settings.loop && (pos == newPos)) {
-                  newPos = settings.startIndex;
-                }
-                return newPos;
-
-              });
-            })
+            .click(forward_func($slider))
             .insertBefore($slider)
           ;
         }
-
 
         if(settings.controls.item) {
 
@@ -150,6 +205,15 @@
           $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
             .addClass('active');
 
+        }
+      }
+
+      // setup animation
+      if(settings.auto.enabled) {
+        $slider.bind('sliderStart', start_func($slider));
+        $slider.bind('sliderStop', stop_func($slider));
+        if(settings.auto.start) {
+          $slider.trigger('sliderStart');
         }
       }
 

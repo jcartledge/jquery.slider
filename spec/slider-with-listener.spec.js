@@ -1,4 +1,3 @@
-
 describe('Slider with event listener', function() {
 
   var sliderContainer,
@@ -14,10 +13,7 @@ describe('Slider with event listener', function() {
 
   afterEach(function() {
     sliderContainer.remove();
-    var controlClasses = ['prev', 'next', 'goto'].map(function(str) {
-      return '.slider-' + str;
-    }).join(',');
-    $(controlClasses).remove();
+    $('.slider-control').remove();
   });
 
   it('should fire a sliderChanged event when next is clicked', function() {

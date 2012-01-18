@@ -11,7 +11,7 @@ describe('Basic slider', function() {
 
   afterEach(function() {
     sliderContainer.remove();
-    $('.slider-prev,.slider-next,.slider-goto').remove();
+    $('.slider-control').remove();
   });
 
   describe('Controls should exist and work as expected', function() {

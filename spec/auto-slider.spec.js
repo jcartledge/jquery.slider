@@ -17,10 +17,7 @@ describe('Automatically updating slider', function() {
 
   afterEach(function() {
     sliderContainer.slider('stop').remove();
-    var controlClasses = ['prev', 'next', 'goto'].map(function(str) {
-      return '.slider-' + str;
-    }).join(',');
-    $(controlClasses).remove();
+    $('.slider-control').remove();
   });
 
   it('should animate', function() {
@@ -57,6 +54,47 @@ describe('Automatically updating slider', function() {
     runs(function() {
       expect(callback).not.toHaveBeenCalled();
     });
+  });
+
+  describe('with controls', function() {
+
+    beforeEach(function() {
+      options.auto.start = false;
+      options.auto.controls = {
+        play: 'play',
+        pause: 'pause'
+      };
+      sliderContainer.slider(options);
+    });
+
+    it('should have a play button', function() {
+      expect($('.slider-play')).toHaveText(options.auto.controls.play);
+    });
+
+    it('should have a pause button', function() {
+      expect($('.slider-pause')).toHaveText(options.auto.controls.pause);
+    });
+
+    it('should play when the play button is activated', function() {
+      $('.slider-play').click();
+      waits(25);
+      runs(function() {
+        expect(sliderContainer.data('position')).toBe(3);
+      });
+    });
+
+    it('should pause when the pause button is activated', function() {
+      $('.slider-play').click();
+      waits(25);
+      runs(function() {
+        $('.slider-pause').click();
+      });
+      waits(25);
+      runs(function() {
+        expect(sliderContainer.data('position')).toBe(3);
+      });
+    });
+
   });
 
 });

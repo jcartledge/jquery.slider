@@ -32,7 +32,11 @@
         auto         : {
           enabled    : false,
           start      : true,
-          timeout    : 5000
+          timeout    : 5000,
+          controls   : {
+            play     : false,
+            pause    : false
+          }
         },
         itemSelector : 'li',
         cssPrefix    : 'slider-',
@@ -104,12 +108,13 @@
     }
 
     // Return a function to start the slider animating
-    function start_func($slider) {
+    function start_func($slider, immediate) {
       return function() {
         if(!settings.auto.enabled) {
           return;
         }
         var callback = forward_func($slider);
+        if(immediate) callback();
         stop_func($slider)();
         $slider.data('timeout', setInterval(callback, settings.auto.timeout));
       };
@@ -209,6 +214,30 @@
           $slider.data('buttons', itemControlContainer);
           $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
             .addClass('active');
+
+        }
+
+        if(settings.auto.enabled) {
+
+          if(settings.auto.controls.play) {
+            $('<button/>')
+              .addClass(settings.cssPrefix + 'control')
+              .addClass(settings.cssPrefix + 'play')
+              .html(settings.auto.controls.play)
+              .click(start_func($slider, true))
+              .insertBefore($slider)
+            ;
+          }
+
+          if(settings.auto.controls.pause) {
+            $('<button/>')
+              .addClass(settings.cssPrefix + 'control')
+              .addClass(settings.cssPrefix + 'pause')
+              .html(settings.auto.controls.pause)
+              .click(stop_func($slider))
+              .insertBefore($slider)
+            ;
+          }
 
         }
       }

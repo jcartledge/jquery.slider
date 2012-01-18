@@ -14,10 +14,7 @@ describe('Slider with custom options', function() {
 
   afterEach(function() {
     sliderContainer.remove();
-    var controlClasses = ['prev', 'next', 'goto'].map(function(str) {
-      return '.' + (options.cssPrefix || 'slider-') + str;
-    }).join(',');
-    $(controlClasses).remove();
+    $('.' + (options.cssPrefix || 'slider-') + 'control').remove();
   });
 
   describe('Overriding the item selector', function() {

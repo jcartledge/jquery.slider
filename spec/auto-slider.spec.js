@@ -1,4 +1,3 @@
-
 describe('Automatically updating slider', function() {
 
   var sliderContainer,
@@ -37,7 +36,7 @@ describe('Automatically updating slider', function() {
     sliderContainer.bind('sliderChanged', callback).slider(options);
     waits(110);
     runs(function() {
-      expect(callback).wasNotCalled();
+      expect(callback).not.toHaveBeenCalled();
     });
   });
 
@@ -56,7 +55,7 @@ describe('Automatically updating slider', function() {
     sliderContainer.slider('stop').bind('sliderChanged', callback);
     waits(110);
     runs(function() {
-      expect(callback).wasNotCalled();
+      expect(callback).not.toHaveBeenCalled();
     });
   });
 

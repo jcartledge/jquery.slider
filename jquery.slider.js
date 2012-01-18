@@ -159,7 +159,9 @@
       if(positions > 1) {
 
         if(settings.controls.prev) {
-          $('<button class="' + settings.cssPrefix + 'prev"/>')
+          $('<button/>')
+            .addClass(settings.cssPrefix + 'control')
+            .addClass(settings.cssPrefix + 'prev')
             .html(settings.controls.prev)
             .click(backward_func($slider))
             .insertBefore($slider)
@@ -167,7 +169,9 @@
         }
 
         if(settings.controls.next) {
-          $('<button class="' + settings.cssPrefix + 'next"/>')
+          $('<button/>')
+            .addClass(settings.cssPrefix + 'control')
+            .addClass(settings.cssPrefix + 'next')
             .html(settings.controls.next)
             .click(forward_func($slider))
             .insertBefore($slider)
@@ -191,6 +195,7 @@
               .html($.util.isNumeric(settings.controls.item) ?
                   position.toString() :
                   settings.controls.item)
+              .addClass(settings.cssPrefix + 'control')
               .addClass(settings.cssPrefix + 'goto')
               .addClass(settings.cssPrefix + 'goto-' + position)
               .data('position', position)

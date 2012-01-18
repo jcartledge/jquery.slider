@@ -32,7 +32,7 @@ describe('Slider with event listener', function() {
 
   it('should not fire a sliderChanged event when the position has not changed', function() {
     $('.slider-prev').click();
-    expect(callback).wasNotCalled();
+    expect(callback).not.toHaveBeenCalled();
   });
 
 });

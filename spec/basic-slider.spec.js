@@ -81,4 +81,19 @@ describe('Basic slider', function() {
 
   });
 
+  describe('Controls should set the slider-active class on active items', function() {
+
+    it('should set the slider-active class on the first item initially', function() {
+      var pos = sliderContainer.data('position');
+      expect(sliderContainer.find('li').first()).toHaveClass('slider-active');
+    });
+
+    it('should set the slider-active class on the first item initially', function() {
+      $('.slider-next').click();
+      var pos = sliderContainer.data('position');
+      expect($(sliderContainer.find('li').get(pos))).toHaveClass('slider-active');
+    });
+
+  });
+
 });

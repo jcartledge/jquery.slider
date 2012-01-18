@@ -74,6 +74,9 @@
 
       }
 
+      // Set active class on active item(s)
+      setActiveClass(this);
+
       // Trigger an event so subscribers can update the view when it changes:
       this.trigger('sliderChanged', [newPos, pos]);
 
@@ -127,6 +130,14 @@
       };
     }
 
+    // Set active class on active item(s)
+    function setActiveClass($slider) {
+      $slider.find(settings.itemSelector)
+        .removeClass(settings.cssPrefix + 'active');
+      $($slider.find(settings.itemSelector).get($slider.data('position')))
+        .addClass(settings.cssPrefix + 'active');
+    }
+
     // Set up the sliders:
     this.each(function() {
 
@@ -156,6 +167,9 @@
       if($slider.data('position') === undefined) {
         $slider.data('position', settings.startIndex);
       }
+
+      // Set slider-active class on active item(s)
+      setActiveClass($slider);
 
       // Ensure data.positions is set on the slider.
       $slider.data('positions', positions);

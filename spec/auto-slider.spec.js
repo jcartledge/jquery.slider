@@ -5,7 +5,7 @@ describe('Automatically updating slider', function() {
       options = {
         auto: {
           enabled: true,
-          timeout: 100
+          timeout: 10
         }
       };
 
@@ -25,7 +25,7 @@ describe('Automatically updating slider', function() {
 
   it('should animate', function() {
     sliderContainer.bind('sliderChanged', callback).slider(options);
-    waits(110);
+    waits(15);
     runs(function() {
       expect(callback).toHaveBeenTriggeredWith(1, 0);
     });
@@ -34,7 +34,7 @@ describe('Automatically updating slider', function() {
   it('should obey options.auto.start', function() {
     options.auto.start = false;
     sliderContainer.bind('sliderChanged', callback).slider(options);
-    waits(110);
+    waits(15);
     runs(function() {
       expect(callback).not.toHaveBeenCalled();
     });
@@ -44,7 +44,7 @@ describe('Automatically updating slider', function() {
     options.auto.start = false;
     sliderContainer.bind('sliderChanged', callback).slider(options);
     sliderContainer.slider('start');
-    waits(110);
+    waits(15);
     runs(function() {
       expect(callback).toHaveBeenTriggeredWith(1, 0);
     });
@@ -53,7 +53,7 @@ describe('Automatically updating slider', function() {
   it("should respond to .slider('stop')", function() {
     sliderContainer.slider(options);
     sliderContainer.slider('stop').bind('sliderChanged', callback);
-    waits(110);
+    waits(15);
     runs(function() {
       expect(callback).not.toHaveBeenCalled();
     });

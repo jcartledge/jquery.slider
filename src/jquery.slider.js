@@ -29,7 +29,8 @@
       },
       itemSelector : 'li',
       cssPrefix    : 'slider-',
-      startIndex        : 0
+      startIndex   : 0,
+      loop         : false
     }, options);
 
     // Handler to update the slider when a control is clicked.
@@ -89,7 +90,11 @@
             .html(settings.controls.prev)
             .click(function() {
               move.call($slider, function(pos) {
-                return Math.max(pos - 1, settings.startIndex);
+                var newPos = Math.max(pos - 1, settings.startIndex);
+                if(settings.loop && (pos == newPos)) {
+                  newPos = positions - 1 + settings.startIndex;
+                }
+                return newPos;
               });
             })
             .insertBefore($slider)
@@ -101,7 +106,12 @@
             .html(settings.controls.next)
             .click(function() {
               move.call($slider, function(pos) {
-                return Math.min(pos + 1, positions - 1 + settings.startIndex);
+                var newPos = Math.min(pos + 1, positions - 1 + settings.startIndex);
+                if(settings.loop && (pos == newPos)) {
+                  newPos = settings.startIndex;
+                }
+                return newPos;
+
               });
             })
             .insertBefore($slider)

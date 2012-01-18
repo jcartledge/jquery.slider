@@ -115,4 +115,30 @@ describe('Slider with custom options', function() {
 
   });
 
+  describe('Looping', function() {
+
+    var callback, positions;
+
+    beforeEach(function() {
+      callback = jasmine.createSpy();
+      options.loop = true;
+      sliderContainer.slider(options);
+      last = sliderContainer.data('positions') - 1;
+    });
+
+    it('should loop forwards from end to start', function() {
+      $('.slider-goto').last().click();
+      sliderContainer.bind('sliderChanged', callback);
+      $('.slider-next').click();
+      expect(callback).toHaveBeenTriggeredWith(0, last);
+    });
+
+    it('should loop backwards from start to end', function() {
+      sliderContainer.bind('sliderChanged', callback);
+      $('.slider-prev').click();
+      expect(callback).toHaveBeenTriggeredWith(last, 0);
+    });
+
+  });
+
 });

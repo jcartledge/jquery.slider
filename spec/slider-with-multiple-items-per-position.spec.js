@@ -29,15 +29,15 @@ describe('Slider with multiple items per position', function() {
   it('should set a numeric active class on all active items', function() {
     expect(sliderContainer.find(options.itemSelector).first())
       .toHaveClass('slider-active-0');
-    expect($(sliderContainer.find(options.itemSelector).get(1)))
+    expect(sliderContainer.find(options.itemSelector).eq(1))
       .toHaveClass('slider-active-1');
   });
 
   it('should set active classes correctly after changing position', function() {
     $('.slider-next').click();
-    expect($(sliderContainer.find(options.itemSelector).get(2)))
+    expect(sliderContainer.find(options.itemSelector).eq(2))
       .toHaveClass('slider-active-0');
-    expect($(sliderContainer.find(options.itemSelector).get(3)))
+    expect(sliderContainer.find(options.itemSelector).eq(3))
       .toHaveClass('slider-active-1');
   });
 

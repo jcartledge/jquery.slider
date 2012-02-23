@@ -22,28 +22,26 @@
     // Settings can be overridden by passing in `options` object.
     // If you don't want a particular control set it to `false`.
 
-    if(typeof options === 'object' || typeof options === 'undefined') {
-      var settings =  $.extend(true, {
-        controls     : {
-          prev       : 'previous',
-          next       : 'next',
-          item       : '0'
-        },
-        auto         : {
-          enabled    : false,
-          start      : true,
-          timeout    : 5000,
-          controls   : {
-            play     : false,
-            pause    : false
-          }
-        },
-        itemSelector : 'li',
-        cssPrefix    : 'slider-',
-        startIndex   : 0,
-        loop         : false
-      }, options);
-    }
+    var settings =  $.extend(true, {
+      controls     : {
+        prev       : 'previous',
+        next       : 'next',
+        item       : '0'
+      },
+      auto         : {
+        enabled    : false,
+        start      : true,
+        timeout    : 5000,
+        controls   : {
+          play     : false,
+          pause    : false
+        }
+      },
+      itemSelector : 'li',
+      cssPrefix    : 'slider-',
+      startIndex   : 0,
+      loop         : false
+    }, options);
 
     // Handler to update the slider when a control is clicked.
     // `f` is a function which returns the new position.
@@ -181,20 +179,6 @@
       var $slider = $(this),
           positions = $slider.data('positions') || $slider.find(settings.itemSelector).length;
 
-      // respond to commands like stop and start after the slider has been set up.
-      if($slider.data('slider-processed')) {
-        settings = $slider.data('slider-settings');
-        switch(options) {
-          case 'start':
-            start_func($slider)();
-            break;
-          case 'stop':
-            stop_func($slider)();
-            break;
-        }
-        return;
-      }
-
       // Store settings on the slider so we can do stuff to it later
       if($slider.data('slider-settings') === undefined) {
         $slider.data('slider-settings', settings);
@@ -296,9 +280,10 @@
 
       // setup animation
       if(settings.auto.enabled) {
-        $slider.bind('sliderStart', start_func($slider));
-        $slider.bind('sliderStop', stop_func($slider));
+        $slider.bind('start', start_func($slider));
+        $slider.bind('stop', stop_func($slider));
         if(settings.auto.start) {
+          console.log('autostart');
           $slider.trigger('sliderStart');
         }
       }
@@ -312,4 +297,3 @@
   };
 
 })(jQuery);
-

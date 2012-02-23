@@ -288,8 +288,7 @@
         $slider.bind('start', start_func($slider));
         $slider.bind('stop', stop_func($slider));
         if(settings.auto.start) {
-          console.log('autostart');
-          $slider.trigger('sliderStart');
+          $slider.trigger('start');
         }
       }
 

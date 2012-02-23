@@ -74,14 +74,23 @@
 
       }
 
-      $('.' + settings.cssPrefix + 'control').removeAttr('disabled');
+      var prevControl = this.data('prev-control'),
+          nextControl = this.data('next-control');
 
-      if(newPos == settings.startIndex) {
-        $('.' + settings.cssPrefix + 'prev').attr('disabled', 'disabled');
+      if(prevControl) {
+        if(newPos == settings.startIndex) {
+          prevControl.attr('disabled', 'disabled');
+        } else {
+         prevControl.removeAttr('disabled');
+        }
       }
 
-      if(newPos == (settings.startIndex + this.data('positions') - 1)) {
-        $('.' + settings.cssPrefix + 'next').attr('disabled', 'disabled');
+      if(nextControl) {
+        if(newPos == (settings.startIndex + this.data('positions') - 1)) {
+          nextControl.attr('disabled', 'disabled');
+        } else {
+          nextControl.removeAttr('disabled');
+        }
       }
 
       // Set active class on active item(s)
@@ -206,24 +215,24 @@
       if(positions > 1) {
 
         if(settings.controls.prev) {
-          $('<button/>')
+          $slider.data('prev-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
             .attr('disabled', 'disabled')
             .html(settings.controls.prev)
             .click(backward_func($slider))
             .insertBefore($slider)
-          ;
+          );
         }
 
         if(settings.controls.next) {
-          $('<button/>')
+          $slider.data('next-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'next')
             .html(settings.controls.next)
             .click(forward_func($slider))
             .insertBefore($slider)
-          ;
+          );
         }
 
         if(settings.controls.item) {

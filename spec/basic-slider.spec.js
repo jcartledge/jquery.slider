@@ -4,7 +4,7 @@ describe('Basic slider', function() {
   var sliderContainer;
 
   beforeEach(function() {
-    sliderContainer = $('<ul class="slider"><li>1</li><li>2</li></ul>')
+    sliderContainer = $('<ul class="slider"><li>1</li><li>2</li><li>3</li></ul>')
       .appendTo($('body'))
       .slider();
   });
@@ -25,7 +25,7 @@ describe('Basic slider', function() {
     });
 
     it('should have 2 item controls', function() {
-      expect($('.slider-goto').length).toBe(2);
+      expect($('.slider-goto').length).toBe(3);
     });
 
     it('should start on the first slide', function() {
@@ -40,7 +40,8 @@ describe('Basic slider', function() {
     it('should not advance past the end', function() {
       $('.slider-next').click();
       $('.slider-next').click();
-      expect(sliderContainer).toHaveData('position', 1);
+      $('.slider-next').click();
+      expect(sliderContainer).toHaveData('position', 2);
     });
 
     it('should go back when prev is clicked', function() {
@@ -68,6 +69,7 @@ describe('Basic slider', function() {
 
     it('should set disabled class on the next button when the end is reached', function() {
       $('.slider-next').click();
+      $('.slider-next').click();
       expect($('.slider-next')).toBeDisabled();
     });
 
@@ -87,6 +89,7 @@ describe('Basic slider', function() {
     });
 
     it('should remove disabled class from the next button when the last position is left', function() {
+     $('.slider-next').click();
      $('.slider-next').click();
      $('.slider-prev').click();
      expect($('.slider-next')).not.toBeDisabled();
@@ -108,6 +111,7 @@ describe('Basic slider', function() {
     it('should have numeric labels for item buttons', function() {
       expect($('.slider-goto-0')).toHaveText('0');
       expect($('.slider-goto-1')).toHaveText('1');
+      expect($('.slider-goto-2')).toHaveText('2');
     });
 
   });

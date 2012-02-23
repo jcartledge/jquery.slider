@@ -74,22 +74,14 @@
 
       }
 
+      $('.' + settings.cssPrefix + 'control').removeAttr('disabled');
+
       if(newPos == settings.startIndex) {
-
-        $('.' + settings.cssPrefix + 'control')
-          .removeAttr('disabled');
-        $('.' + settings.cssPrefix + 'prev')
-          .attr('disabled', 'disabled');
-
+        $('.' + settings.cssPrefix + 'prev').attr('disabled', 'disabled');
       }
 
       if(newPos == (settings.startIndex + this.data('positions') - 1)) {
-
-        $('.' + settings.cssPrefix + 'control')
-          .removeAttr('disabled');
-        $('.' + settings.cssPrefix + 'next')
-          .attr('disabled', 'disabled');
-
+        $('.' + settings.cssPrefix + 'next').attr('disabled', 'disabled');
       }
 
       // Set active class on active item(s)

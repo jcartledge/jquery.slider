@@ -74,6 +74,24 @@
 
       }
 
+      if(newPos == settings.startIndex) {
+
+        $('.' + settings.cssPrefix + 'control')
+          .removeAttr('disabled');
+        $('.' + settings.cssPrefix + 'prev')
+          .attr('disabled', 'disabled');
+
+      }
+
+      if(newPos == (settings.startIndex + this.data('positions') - 1)) {
+
+        $('.' + settings.cssPrefix + 'control')
+          .removeAttr('disabled');
+        $('.' + settings.cssPrefix + 'next')
+          .attr('disabled', 'disabled');
+
+      }
+
       // Set active class on active item(s)
       setActiveClass(this);
 
@@ -199,6 +217,7 @@
           $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
+            .attr('disabled', 'disabled')
             .html(settings.controls.prev)
             .click(backward_func($slider))
             .insertBefore($slider)

@@ -64,6 +64,37 @@ describe('Basic slider', function() {
 
   });
 
+  describe('Next and previous controls should indicate when they are disabled', function() {
+
+    it('should set disabled class on the next button when the end is reached', function() {
+      $('.slider-next').click();
+      expect($('.slider-next')).toBeDisabled();
+    });
+
+    it('should set disabled class on the previous button when the start is reached', function() {
+      $('.slider-next').click();
+      $('.slider-prev').click();
+      expect($('.slider-prev')).toBeDisabled();
+    });
+
+    it('should set disabled class on the previous button initially', function() {
+      expect($('.slider-prev')).toBeDisabled();
+    });
+
+    it('should remove disabled class from the previous button when first position is left', function() {
+      $('.slider-next').click();
+      expect($('.slider-prev')).not.toBeDisabled();
+    });
+
+    it('should remove disabled class from the next button when the last position is left', function() {
+     $('.slider-next').click();
+     $('.slider-prev').click();
+     expect($('.slider-next')).not.toBeDisabled();
+   });
+
+  });
+
+
   describe('Controls should have sensible default labels', function() {
 
     it('should have a sensible default label for the previous button', function() {

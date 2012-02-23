@@ -47,9 +47,11 @@
     // `f` is a function which returns the new position.
     function move(f) {
 
-      var pos     = this.data('position') || settings.startIndex,
-          newPos  = f(pos),
-          buttons = this.data('buttons');
+      var pos         = this.data('position') || settings.startIndex,
+          newPos      = f(pos),
+          buttons     = this.data('buttons'),
+          prevControl = this.data('prev-control'),
+          nextControl = this.data('next-control');
 
       if(pos == newPos) return;
       // Update data-position and position class on container:
@@ -72,9 +74,7 @@
 
       }
 
-      var prevControl = this.data('prev-control'),
-          nextControl = this.data('next-control');
-
+      // update disabled state of prev control
       if(prevControl) {
         if(newPos == settings.startIndex) {
           prevControl.attr('disabled', 'disabled');
@@ -83,6 +83,7 @@
         }
       }
 
+      // update disabled state of next control
       if(nextControl) {
         if(newPos == (settings.startIndex + this.data('positions') - 1)) {
           nextControl.attr('disabled', 'disabled');
@@ -150,22 +151,26 @@
     // Set active class on active item(s)
     function setActiveClass($slider) {
 
-      var items = $slider.find(settings.itemSelector),
+      var items     = $slider.find(settings.itemSelector),
           positions = $slider.data('positions'),
-          position = $slider.data('position');
+          position  = $slider.data('position');
 
       items.removeClass(settings.cssPrefix + 'active');
 
       if(positions == items.length) {
+        // There is one item per position, so only one active item
         $(items.get(position)).addClass(settings.cssPrefix + 'active');
       } else {
-        var itemsPerPosition = Math.ceil(items.length / positions),
-            start = position * itemsPerPosition,
-            end = start + itemsPerPosition;
-        items.slice(start, end)
+        // There are more than one items per position, so multiple active items
+        var itemsPerPosition  = Math.ceil(items.length / positions),
+            start             = position * itemsPerPosition,
+            end               = start + itemsPerPosition,
+            className;
+        items
+          .slice(start, end)
           .addClass(settings.cssPrefix + 'active')
           .each(function(i, e) {
-            var className = settings.cssPrefix + 'active-' + i;
+            className = settings.cssPrefix + 'active-' + i;
             items.removeClass(className);
             $(this).addClass(className);
           });

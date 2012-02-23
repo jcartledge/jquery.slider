@@ -136,6 +136,21 @@ describe('Slider with custom options', function() {
       expect(callback).toHaveBeenTriggeredWith(last, 0);
     });
 
+    it('should set not set disabled class on the next button when the end is reached', function() {
+      $('.slider-goto').last().click();
+      expect($('.slider-next')).not.toBeDisabled();
+    });
+
+    it('should not set disabled class on the previous button when the start is reached', function() {
+      $('.slider-next').click();
+      $('.slider-prev').click();
+      expect($('.slider-prev')).not.toBeDisabled();
+    });
+
+    it('should set disabled class on the previous button initially', function() {
+      expect($('.slider-prev')).not.toBeDisabled();
+    });
+
   });
 
 });

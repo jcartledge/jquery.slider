@@ -75,7 +75,7 @@
       }
 
       // update disabled state of prev control
-      if(prevControl) {
+      if(prevControl && !settings.loop) {
         if(newPos == settings.startIndex) {
           prevControl.attr('disabled', 'disabled');
         } else {
@@ -84,7 +84,7 @@
       }
 
       // update disabled state of next control
-      if(nextControl) {
+      if(nextControl && !settings.loop) {
         if(newPos == (settings.startIndex + this.data('positions') - 1)) {
           nextControl.attr('disabled', 'disabled');
         } else {
@@ -207,11 +207,13 @@
           $slider.data('prev-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
-            .attr('disabled', 'disabled')
             .html(settings.controls.prev)
             .click(backward_func($slider))
             .insertBefore($slider)
           );
+          if(!settings.loop) {
+            $slider.data('prev-control').attr('disabled', 'disabled');
+          }
         }
 
         if(settings.controls.next) {

@@ -5,9 +5,10 @@ describe('Slider with multiple items per position', function() {
 
   beforeEach(function() {
     options = {
-      itemSelector: 'div'
+      itemSelector: 'div',
+      itemsPerPosition: 2
     };
-    sliderContainer = $('<div class="slider" data-positions="2"><div>1</div><div>2</div><div>3</div><div>4</div></div>')
+    sliderContainer = $('<div class="slider"><div>1</div><div>2</div><div>3</div><div>4</div></div>')
       .appendTo($('body'))
       .slider(options);
   });

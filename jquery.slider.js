@@ -23,24 +23,25 @@
     // If you don't want a particular control set it to `false`.
 
     var settings =  $.extend(true, {
-      controls     : {
-        prev       : 'previous',
-        next       : 'next',
-        item       : '0'
+      controls         : {
+        prev           : 'previous',
+        next           : 'next',
+        item           : '0'
       },
-      auto         : {
-        enabled    : false,
-        start      : true,
-        timeout    : 5000,
-        controls   : {
-          play     : false,
-          pause    : false
+      auto             : {
+        enabled        : false,
+        start          : true,
+        timeout        : 5000,
+        controls       : {
+          play         : false,
+          pause        : false
         }
       },
-      itemSelector : 'li',
-      cssPrefix    : 'slider-',
-      startIndex   : 0,
-      loop         : false
+      itemSelector      : 'li',
+      cssPrefix         : 'slider-',
+      startIndex        : 0,
+      loop              : false,
+      itemsPerPosition  : 1
     }, options);
 
     // Handler to update the slider when a control is clicked.
@@ -162,9 +163,8 @@
         $(items.get(position)).addClass(settings.cssPrefix + 'active');
       } else {
         // There are more than one items per position, so multiple active items
-        var itemsPerPosition  = Math.ceil(items.length / positions),
-            start             = position * itemsPerPosition,
-            end               = start + itemsPerPosition,
+        var start             = position * settings.itemsPerPosition,
+            end               = start + settings.itemsPerPosition,
             className;
         items
           .slice(start, end)
@@ -182,7 +182,7 @@
     this.each(function() {
 
       var $slider = $(this),
-          positions = $slider.data('positions') || $slider.find(settings.itemSelector).length;
+          positions = Math.ceil($slider.find(settings.itemSelector).length / settings.itemsPerPosition);
 
       // Store settings on the slider so we can do stuff to it later
       if($slider.data('slider-settings') === undefined) {

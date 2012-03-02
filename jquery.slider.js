@@ -130,26 +130,6 @@
       };
     }
 
-    // Return a function to start the slider animating
-    function start_func($slider, immediate) {
-      return function() {
-        if(!settings.auto.enabled) {
-          return;
-        }
-        var callback = forward_func($slider);
-        if(immediate) callback();
-        stop_func($slider)();
-        $slider.data('timeout', setInterval(callback, settings.auto.timeout));
-      };
-    }
-
-    // Return a function to stop the slider animating
-    function stop_func($slider) {
-      return function() {
-        clearTimeout($slider.data('timeout'));
-      };
-    }
-
     // Set active class on active item(s)
     function setActiveClass($slider) {
 
@@ -271,7 +251,7 @@
               .addClass(settings.cssPrefix + 'control')
               .addClass(settings.cssPrefix + 'play')
               .html(settings.auto.controls.play)
-              .click(start_func($slider, true))
+              .click(function() { $slider.trigger('start', true); })
               .insertBefore($slider)
             ;
           }
@@ -281,7 +261,7 @@
               .addClass(settings.cssPrefix + 'control')
               .addClass(settings.cssPrefix + 'pause')
               .html(settings.auto.controls.pause)
-              .click(stop_func($slider))
+              .click(function() {$slider.trigger('stop'); })
               .insertBefore($slider)
             ;
           }
@@ -291,10 +271,26 @@
 
       // setup animation
       if(settings.auto.enabled) {
-        var start = start_func($slider),
-            stop = stop_func($slider);
-        $slider.bind('start', start);
-        $slider.bind('stop', stop);
+
+        $slider.bind('start', function(e, immediate) {
+          if(!settings.auto.enabled) {
+            return;
+          }
+          var callback = forward_func($slider);
+          if(immediate) callback();
+          clearTimeout($slider.data('timeout'));
+          $slider.data('timeout', setInterval(callback, settings.auto.timeout));
+        });
+
+        $slider.bind('stop', function(e) {
+          return function() {
+            clearTimeout($slider.data('timeout'));
+          };
+        });
+
+        var start = function() { $silder.trigger('start'); },
+            stop = function() { $slider.trigger('stop'); };
+
         if(settings.auto.start) {
           $slider.trigger('start');
         }

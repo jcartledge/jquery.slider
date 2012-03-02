@@ -32,6 +32,7 @@
         enabled        : false,
         start          : true,
         timeout        : 5000,
+        pauseOnInteract: true,
         controls       : {
           play         : false,
           pause        : false
@@ -290,10 +291,19 @@
 
       // setup animation
       if(settings.auto.enabled) {
-        $slider.bind('start', start_func($slider));
-        $slider.bind('stop', stop_func($slider));
+        var start = start_func($slider),
+            stop = stop_func($slider);
+        $slider.bind('start', start);
+        $slider.bind('stop', stop);
         if(settings.auto.start) {
           $slider.trigger('start');
+        }
+        if(settings.auto.pauseOnInteract) {
+          $slider
+            .hover(stop, start)
+            .add($slider.data('buttons'))
+            .focusin(stop).focusout(start);
+          $slider.data('buttons').find('button').click(stop);
         }
       }
 

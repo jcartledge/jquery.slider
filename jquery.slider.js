@@ -152,9 +152,10 @@
     // Set active class on active item(s)
     function setActiveClass($slider) {
 
-      var items     = $slider.find(settings.itemSelector),
-          positions = $slider.data('positions'),
-          position  = $slider.data('position');
+      var items             = $slider.find(settings.itemSelector),
+          positions         = $slider.data('positions'),
+          position          = $slider.data('position'),
+          itemsPerPosition  = $slider.data('items-per-position');
 
       items.removeClass(settings.cssPrefix + 'active');
 
@@ -163,8 +164,8 @@
         $(items.get(position)).addClass(settings.cssPrefix + 'active');
       } else {
         // There are more than one items per position, so multiple active items
-        var start             = position * settings.itemsPerPosition,
-            end               = start + settings.itemsPerPosition,
+        var start             = position * itemsPerPosition,
+            end               = start + itemsPerPosition,
             className;
         items
           .slice(start, end)
@@ -182,7 +183,8 @@
     this.each(function() {
 
       var $slider = $(this),
-          positions = Math.ceil($slider.find(settings.itemSelector).length / settings.itemsPerPosition);
+          itemsPerPosition = $slider.data('items-per-position') || settings.itemsPerPosition,
+          positions = Math.ceil($slider.find(settings.itemSelector).length / itemsPerPosition);
 
       // Store settings on the slider so we can do stuff to it later
       if($slider.data('slider-settings') === undefined) {
@@ -194,8 +196,9 @@
         $slider.data('position', settings.startIndex);
       }
 
-      // Ensure data.positions is set on the slider.
-      $slider.data('positions', positions);
+      // Ensure data.positions and itemsPerPosition are set on the slider.
+      $slider.data('positions',           positions);
+      $slider.data('items-per-position',  itemsPerPosition);
 
       // Set slider-active class on active item(s)
       setActiveClass($slider);

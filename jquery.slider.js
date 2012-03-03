@@ -6,44 +6,102 @@
 
 (function($) {
 
-  // Add a utility to test if a value is numeric.
-  // (Don't redefine this if there alreadyis one - just assume that works)
-  if(typeof $.util == 'undefined') {
-    $.util = {};
-  }
-  if(typeof $.util.isNumeric != 'function') {
-    $.util.isNumeric = function(testVal) {
-      return !isNaN(parseFloat(testVal)) && isFinite(testVal);
-    };
-  }
-
   $.fn.slider = function(options) {
 
     // Settings can be overridden by passing in `options` object.
     // If you don't want a particular control set it to `false`.
+    $.fn.slider.defaultSettings = {
 
-    var settings =  $.extend(true, {
+      // Labels for basic controls are configured in this section.
       controls         : {
+
+        // `controls.prev`:
+        // String label for the 'previous' control.
+        // Can be HTML.
+        // Set to `false` if you don't want this control.
         prev           : 'previous',
+
+        // `controls.next`:
+        // String label for the 'next' control.
+        // Can be HTML.
+        // Set to `false` if you don't want this control.
         next           : 'next',
+
+        // `controls.item`:
+        // String label for 'go to item' controls.
+        // Can be HTML.
+        // Set to `false` if you don't want these controls.
+        // If this value is numeric the controls will be
+        // labeled sequentially e.g. 0, 1, 2
         item           : '0'
       },
+
+      // The `auto` section contains configuration options
+      // related to auto-advance functionality.
       auto             : {
+
+        // `auto.enabled`:
+        // Boolean switch for auto-advance functionality.
         enabled        : false,
+
+        // `auto.start`:
+        // Boolean start advancing automatically if true.
         start          : true,
+
+        //`auto.timeout`:
+        // Integer milliseconds to display each item for.
         timeout        : 5000,
+
+        // `auto.pauseOnInteract`:
+        // Boolean pause on focus, hover or button click if true.
         pauseOnInteract: true,
+
+        // Labels for 'play' and 'pause' controls.
         controls       : {
+
+          // `auto.controls.play`:
+          // String label for 'play' control.
+          // Can be HTML.
+          // Set to `false` if you don't want this control.
           play         : false,
+
+          // `auto.controls.pause`:
+          // String label for 'pause' control.
+          // Can be HTML.
+          // Set to `false` if you don't want this control.
           pause        : false
+
         }
       },
+
+      // `itemSelector`:
+      // String CSS/jQuery selector used to determine slideshow items
       itemSelector      : 'li',
+
+      // `cssPrefix`:
+      // String to prepend to classNames applied to slideshow elements
+      // e.g. slider-next, slider-prev, slider-goto, slider-goto-n
       cssPrefix         : 'slider-',
+
+      // `startIndex`:
+      // Integer to start counting from. Usually 0, 1 may make your CSS
+      // read more naturally.
       startIndex        : 0,
+
+      // `loop`:
+      // Boolean if true next and previous controls loop past the end
+      // (and beginning.)
       loop              : false,
+
+      // `itemsPerPosition`:
+      // Integer the number of items displayed in each position. This can
+      // also be defined declaratively e.g.:
+      //  `<ul data-items-per-position="3">...</ul>`
       itemsPerPosition  : 1
-    }, options);
+
+    };
+
+    var settings =  $.extend(true, {}, $.fn.slider.defaultSettings, options);
 
     // Handler to update the slider when a control is clicked.
     // `f` is a function which returns the new position.
@@ -166,11 +224,6 @@
       var $slider = $(this),
           itemsPerPosition = $slider.data('items-per-position') || settings.itemsPerPosition,
           positions = Math.ceil($slider.find(settings.itemSelector).length / itemsPerPosition);
-
-      // Store settings on the slider so we can do stuff to it later
-      if($slider.data('slider-settings') === undefined) {
-        $slider.data('slider-settings', settings);
-      }
 
       // Set data.position on the slider if it's undefined.
       if($slider.data('position') === undefined) {
@@ -310,5 +363,16 @@
     return this;
 
   };
+
+  // Add a utility to test if a value is numeric.
+  // (Don't redefine this if there alreadyis one - just assume that works)
+  if(typeof $.util == 'undefined') {
+    $.util = {};
+  }
+  if(typeof $.util.isNumeric != 'function') {
+    $.util.isNumeric = function(testVal) {
+      return !isNaN(parseFloat(testVal)) && isFinite(testVal);
+    };
+  }
 
 })(jQuery);

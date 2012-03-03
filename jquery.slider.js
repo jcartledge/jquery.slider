@@ -341,7 +341,7 @@
           };
         });
 
-        var start = function() { $silder.trigger('start'); },
+        var start = function() { $slider.trigger('start'); },
             stop = function() { $slider.trigger('stop'); };
 
         if(settings.auto.start) {

@@ -352,7 +352,9 @@
             .hover(stop, start)
             .add($slider.data('buttons'))
             .focusin(stop).focusout(start);
-          $slider.data('buttons').find('button').click(stop);
+          if($slider.data('buttons')) {
+            $slider.data('buttons').find('button').click(stop);
+          }
         }
       }
 

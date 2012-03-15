@@ -15,6 +15,11 @@
       // Labels for basic controls are configured in this section.
       controls         : {
 
+        // `controls.always`
+        // Boolean whether to display next/previous controls
+        // when there is only one position
+        always          : true,
+
         // `controls.prev`:
         // String label for the 'previous' control.
         // Can be HTML.
@@ -238,7 +243,7 @@
       setActiveClass($slider);
 
       // Add controls to the slider:
-      if(positions > 1) {
+      if(settings.controls.always || positions > 1) {
 
         if(settings.controls.prev) {
           $slider.data('prev-control', $('<button/>')
@@ -261,6 +266,9 @@
             .click(forward_func($slider))
             .insertBefore($slider)
           );
+          if(positions == 1) {
+            $slider.data('next-control').attr('disabled', 'disabled');
+          }
         }
 
         if(settings.controls.item) {

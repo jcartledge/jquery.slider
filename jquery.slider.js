@@ -337,32 +337,25 @@
           if(!settings.auto.enabled) {
             return;
           }
-          var callback = forward_func($slider);
+          var $slider = $(this),
+              callback = forward_func($slider);
           if(immediate) callback();
           clearTimeout($slider.data('timeout'));
-          $slider.data('timeout', setInterval(callback, settings.auto.timeout));
+          $(this).data('timeout', setInterval(callback, settings.auto.timeout));
         });
 
         $slider.bind('stop', function(e) {
-          return function() {
-            clearTimeout($slider.data('timeout'));
-          };
+          clearTimeout($(this).data('timeout'));
         });
 
-        var start = function() { $slider.trigger('start'); },
-            stop = function() { $slider.trigger('stop'); };
+        var start = function(e) { $slider.trigger('start'); },
+            stop = function(e) { $slider.trigger('stop'); };
 
         if(settings.auto.start) {
           $slider.trigger('start');
         }
         if(settings.auto.pauseOnInteract) {
-          $slider
-            .hover(stop, start)
-            .add($slider.data('buttons'))
-            .focusin(stop).focusout(start);
-          if($slider.data('buttons')) {
-            $slider.data('buttons').find('button').click(stop);
-          }
+          $.fn.slider._bindPauseOnInteract($slider, start, stop);
         }
       }
 
@@ -371,6 +364,21 @@
     });
 
     return this;
+
+  };
+
+  $.fn.slider._bindPauseOnInteract = function($slider, start, stop) {
+    $slider
+      .hover(stop, start)
+      .focusin(stop)
+      .focusout(start);
+    if($slider.data('buttons')) {
+      $slider.data('buttons').find('button')
+      .hover(stop, start)
+      .click(stop)
+      .focusin(stop)
+      .focusout(start);
+    }
 
   };
 

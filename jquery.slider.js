@@ -170,8 +170,9 @@
       return function() {
         var positions = $slider.data('positions');
         move.call($slider, function(pos) {
-          var newPos = Math.min(pos + 1, positions - 1 + settings.startIndex);
-          if(settings.loop && (pos == newPos)) {
+          var highestPos = positions - 1 + settings.startIndex;
+          var newPos = Math.min(pos + 1, highestPos);
+          if(pos == newPos && settings.loop) {
             newPos = settings.startIndex;
           }
           return newPos;
@@ -229,6 +230,9 @@
       var $slider = $(this),
           itemsPerPosition = $slider.data('items-per-position') || settings.itemsPerPosition,
           positions = Math.ceil($slider.find(settings.itemSelector).length / itemsPerPosition);
+
+      // Add a class to all sliders - makes it easy to remove them en masse.
+      $slider.addClass(settings.cssPrefix + 'slider');
 
       // Set data.position on the slider if it's undefined.
       if($slider.data('position') === undefined) {

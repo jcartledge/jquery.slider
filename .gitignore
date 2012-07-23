@@ -1,2 +1,2 @@
 docs/*
-spec/*.js
+spec/build/*.js

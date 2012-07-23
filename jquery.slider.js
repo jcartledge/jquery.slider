@@ -4,6 +4,28 @@
 // and simple hooks to animate transitions using CSS or JavaScript.
 // The markup it produces should conform to accessibility guidelines.
 
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (oThis) {
+    if (typeof this !== "function") {
+      // closest thing possible to the ECMAScript 5 internal IsCallable function
+      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+    fToBind = this,
+    fNOP = function () {},
+    fBound = function () {
+      return fToBind.apply(this instanceof fNOP ? this : oThis,
+       aArgs.concat(Array.prototype.slice.call(arguments)));
+    };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+
 (function($) {
 
   $.fn.slider = function(options) {
@@ -102,7 +124,21 @@
       // Integer the number of items displayed in each position. This can
       // also be defined declaratively e.g.:
       //  `<ul data-items-per-position="3">...</ul>`
-      itemsPerPosition  : 1
+      itemsPerPosition  : 1,
+
+      // `forwardCallback`
+      // Alternative function to calculate next position and move the slider.
+      // This is called in the context of the jQuery object representing the slider.
+      // The built in forward callback is passed as the first argument so it
+      // can be called from within the custom one.
+      forwardCallback   : false,
+
+      // `backwardCallback`
+      // Alternative function to calculate previous position and move the slider.
+      // This is called in the context of the jQuery object representing the slider.
+      // The built in backward callback is passed as the first argument so it
+      // can be called from within the custom one.
+      backwardCallback  : false
 
     };
 
@@ -250,11 +286,15 @@
       if(settings.controls.always || positions > 1) {
 
         if(settings.controls.prev) {
+          var backwardCallback = backward_func($slider);
+          if('function' == typeof settings.backwardCallback) {
+            backwardCallback = settings.backwardCallback.bind($slider, backwardCallback);
+          }
           $slider.data('prev-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
             .html(settings.controls.prev)
-            .click(backward_func($slider))
+            .click(backwardCallback)
             .insertBefore($slider)
           );
           if(!settings.loop) {
@@ -263,11 +303,15 @@
         }
 
         if(settings.controls.next) {
+          var forwardCallback = forward_func($slider);
+          if('function' == typeof settings.forwardCallback) {
+            forwardCallback = settings.forwardCallback.bind($slider, forwardCallback);
+          }
           $slider.data('next-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'next')
             .html(settings.controls.next)
-            .click(forward_func($slider))
+            .click(forwardCallback)
             .insertBefore($slider)
           );
           if(positions == 1) {
@@ -343,9 +387,16 @@
           }
           var $slider = $(this),
               callback = forward_func($slider);
+
+          if('function' == typeof settings.forwardCallback) {
+            callback = settings.forwardCallback.bind($slider, callback);
+          }
+
           if(immediate) callback();
+
           clearTimeout($slider.data('timeout'));
           $(this).data('timeout', setInterval(callback, settings.auto.timeout));
+
         });
 
         $slider.bind('stop', function(e) {

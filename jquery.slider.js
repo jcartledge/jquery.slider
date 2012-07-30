@@ -60,7 +60,20 @@ if (!Function.prototype.bind) {
         // Set to `false` if you don't want these controls.
         // If this value is numeric the controls will be
         // labeled sequentially e.g. 0, 1, 2
-        item           : '0'
+        item           : '0',
+
+
+      },
+
+      a11y              : {
+        // Define alternative labels for screen readers if
+        // you are using symbolic labels. These will be wrapped
+        // in a <span> with class set to the specified className.
+        className       : 'accessibility',
+        controls        : {
+          prev          : false,
+          next          : false
+        }
       },
 
       // The `auto` section contains configuration options
@@ -285,15 +298,23 @@ if (!Function.prototype.bind) {
       // Add controls to the slider:
       if(settings.controls.always || positions > 1) {
 
+        var controlHtml;
         if(settings.controls.prev) {
           var backwardCallback = backward_func($slider);
           if('function' == typeof settings.backwardCallback) {
             backwardCallback = settings.backwardCallback.bind($slider, backwardCallback);
           }
+          controlHtml = settings.controls.prev;
+          if(settings.a11y.controls.prev) {
+            controlHtml = $('<span/>')
+              .addClass(settings.a11y.className)
+              .html(settings.a11y.controls.prev)
+              .after(controlHtml);
+          }
           $slider.data('prev-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
-            .html(settings.controls.prev)
+            .html(controlHtml)
             .click(backwardCallback)
             .insertBefore($slider)
           );
@@ -307,10 +328,17 @@ if (!Function.prototype.bind) {
           if('function' == typeof settings.forwardCallback) {
             forwardCallback = settings.forwardCallback.bind($slider, forwardCallback);
           }
+          controlHtml = settings.controls.next;
+          if(settings.a11y.controls.next) {
+            controlHtml = $('<span>')
+              .addClass(settings.a11y.className)
+              .html(settings.a11y.controls.next)
+              .after(controlHtml);
+          }
           $slider.data('next-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'next')
-            .html(settings.controls.next)
+            .html(controlHtml)
             .click(forwardCallback)
             .insertBefore($slider)
           );

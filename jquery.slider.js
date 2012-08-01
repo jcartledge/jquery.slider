@@ -367,16 +367,16 @@ if (!Function.prototype.bind) {
           ;
 
           while(position < positions + settings.startIndex) {
-            controlHtml = itemLabel.replace(/\d+/, position.toString());
+            controlHtml = [itemLabel.replace(/\d+/, position.toString())];
             if(itemA11yLabel) {
-              controlHtml = $('<span>')
+              controlHtml.unshift($('<span>')
                 .addClass(settings.a11y.className)
                 .html(itemA11yLabel.replace(/\d+/, position.toString()))
-                .after(controlHtml);
+                .wrap('<div>').parent().html());
             }
 
             $('<button>')
-              .html(controlHtml)
+              .html(controlHtml.join(''))
               .addClass(settings.cssPrefix + 'control')
               .addClass(settings.cssPrefix + 'goto')
               .addClass(settings.cssPrefix + 'goto-' + position)

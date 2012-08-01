@@ -58,9 +58,9 @@ if (!Function.prototype.bind) {
         // String label for 'go to item' controls.
         // Can be HTML.
         // Set to `false` if you don't want these controls.
-        // If this value is numeric the controls will be
-        // labeled sequentially e.g. 0, 1, 2
-        item           : '0',
+        // If there is a number in this value it will be
+        // dynamically replaced with the item number.
+        item           : '0'
 
 
       },
@@ -72,7 +72,8 @@ if (!Function.prototype.bind) {
         className       : 'accessibility',
         controls        : {
           prev          : false,
-          next          : false
+          next          : false,
+          item          : false
         }
       },
 
@@ -350,6 +351,12 @@ if (!Function.prototype.bind) {
         if(settings.controls.item) {
 
           var itemControlContainer = $('<div>'),
+              // Unescape any entities so numbers in them don't get replaced
+              // when we create dynamic slide button labels.
+              itemLabel = $('<span>' + settings.controls.item + '</span>').html(),
+              itemA11yLabel = settings.a11y.controls.item ?
+                $('<span>' + settings.a11y.controls.item + '</span>').html() :
+                false,
               position = settings.startIndex,
               clickHandler = function() {
                 var btn = $(this);
@@ -360,10 +367,16 @@ if (!Function.prototype.bind) {
           ;
 
           while(position < positions + settings.startIndex) {
+            controlHtml = itemLabel.replace(/\d+/, position.toString());
+            if(itemA11yLabel) {
+              controlHtml = $('<span>')
+                .addClass(settings.a11y.className)
+                .html(itemA11yLabel.replace(/\d+/, position.toString()))
+                .after(controlHtml);
+            }
+
             $('<button>')
-              .html($.util.isNumeric(settings.controls.item) ?
-                  position.toString() :
-                  settings.controls.item)
+              .html(controlHtml)
               .addClass(settings.cssPrefix + 'control')
               .addClass(settings.cssPrefix + 'goto')
               .addClass(settings.cssPrefix + 'goto-' + position)
@@ -378,7 +391,6 @@ if (!Function.prototype.bind) {
           $slider.data('buttons', itemControlContainer);
           $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
             .addClass('active');
-
         }
 
         if(settings.auto.enabled) {
@@ -464,16 +476,5 @@ if (!Function.prototype.bind) {
     }
 
   };
-
-  // Add a utility to test if a value is numeric.
-  // (Don't redefine this if there alreadyis one - just assume that works)
-  if(typeof $.util == 'undefined') {
-    $.util = {};
-  }
-  if(typeof $.util.isNumeric != 'function') {
-    $.util.isNumeric = function(testVal) {
-      return !isNaN(parseFloat(testVal)) && isFinite(testVal);
-    };
-  }
 
 })(jQuery);

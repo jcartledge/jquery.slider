@@ -256,7 +256,7 @@ if (!Function.prototype.bind) {
 
       if(positions == items.length) {
         // There is one item per position, so only one active item
-        $(items.get(position)).addClass(settings.cssPrefix + 'active');
+        $(items.get(position - settings.startIndex)).addClass(settings.cssPrefix + 'active');
       } else {
         // There are more than one items per position, so multiple active items
         var start             = position * itemsPerPosition,

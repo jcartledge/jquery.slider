@@ -73,6 +73,8 @@ if (!Function.prototype.bind) {
         controls        : {
           prev          : false,
           next          : false,
+          play          : false,
+          pause         : false,
           item          : false
         }
       },
@@ -110,7 +112,14 @@ if (!Function.prototype.bind) {
           // String label for 'pause' control.
           // Can be HTML.
           // Set to `false` if you don't want this control.
-          pause        : false
+          pause        : false,
+
+          tooltip      : {
+                   playing    : 'Slideshow is playing',
+                   play       : 'Click to play slideshow',
+                   paused     : 'Slideshow is paused',
+                   pause      : 'Click to pause slidehow'
+          }
 
         }
       },
@@ -305,52 +314,58 @@ if (!Function.prototype.bind) {
           if('function' == typeof settings.backwardCallback) {
             backwardCallback = settings.backwardCallback.bind($slider, backwardCallback);
           }
-          controlHtml = settings.controls.prev;
-          if(settings.a11y.controls.prev) {
-            controlHtml = $('<span/>')
-              .addClass(settings.a11y.className)
-              .html(settings.a11y.controls.prev)
-              .after(controlHtml);
-          }
+
+          //Add prev button
           $slider.data('prev-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'prev')
-            .html(controlHtml)
+            .html(settings.controls.prev)
             .click(backwardCallback)
             .insertBefore($slider)
           );
+           
+          if(settings.a11y.controls.prev) {    
+             $('<span/>').addClass(settings.a11y.className).html(settings.a11y.controls.prev).prependTo($slider.data('prev-control'));   
+          }     
+
           if(!settings.loop) {
             $slider.data('prev-control').attr('disabled', 'disabled');
           }
         }
 
+        //Add next button
         if(settings.controls.next) {
           var forwardCallback = forward_func($slider);
           if('function' == typeof settings.forwardCallback) {
             forwardCallback = settings.forwardCallback.bind($slider, forwardCallback);
           }
-          controlHtml = settings.controls.next;
-          if(settings.a11y.controls.next) {
-            controlHtml = $('<span>')
-              .addClass(settings.a11y.className)
-              .html(settings.a11y.controls.next)
-              .after(controlHtml);
-          }
+          
           $slider.data('next-control', $('<button/>')
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'next')
-            .html(controlHtml)
+            .html(settings.controls.next)
             .click(forwardCallback)
             .insertBefore($slider)
           );
+
+          if(settings.a11y.controls.next) {    
+             $('<span/>').addClass(settings.a11y.className).html(settings.a11y.controls.next).prependTo($slider.data('next-control'));
+          }   
+
           if(positions == 1) {
             $slider.data('next-control').attr('disabled', 'disabled');
           }
         }
 
+        if(settings.controls.item || settings.auto.enabled) {
+           var sliderControlContainer = $('<div>').addClass('slider-controls');
+           sliderControlContainer.insertAfter($slider);
+        }
+      
+        //add item buttons
         if(settings.controls.item) {
 
-          var itemControlContainer = $('<div>'),
+          var itemControlContainer = $('<div>').addClass('slider-control-items'),
               // Unescape any entities so numbers in them don't get replaced
               // when we create dynamic slide button labels.
               itemLabel = $('<span>' + settings.controls.item + '</span>').html(),
@@ -387,36 +402,53 @@ if (!Function.prototype.bind) {
             position++;
           }
 
-          itemControlContainer.insertAfter($slider);
+          //itemControlContainer.insertAfter($slider);
+          itemControlContainer.appendTo(sliderControlContainer)
           $slider.data('buttons', itemControlContainer);
           $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
             .addClass('active');
         }
 
-        if(settings.auto.enabled) {
-
-          if(settings.auto.controls.play) {
-            $('<button/>')
-              .addClass(settings.cssPrefix + 'control')
-              .addClass(settings.cssPrefix + 'play')
-              .html(settings.auto.controls.play)
-              .click(function() { $slider.trigger('start', true); })
-              .insertBefore($slider)
-            ;
-          }
-
-          if(settings.auto.controls.pause) {
-            $('<button/>')
-              .addClass(settings.cssPrefix + 'control')
-              .addClass(settings.cssPrefix + 'pause')
-              .html(settings.auto.controls.pause)
-              .click(function() {$slider.trigger('stop'); })
-              .insertBefore($slider)
-            ;
-          }
-
-        }
       }
+
+          if(settings.auto.enabled) {
+          
+
+             //add pause button
+            if(settings.auto.controls.pause) {
+
+                $slider.data('pause-control', $('<button/>')
+                        .addClass(settings.cssPrefix + 'control')
+                        .addClass(settings.cssPrefix + 'pause')
+                        .html(settings.auto.controls.pause)
+                        .click(function() {$slider.trigger('stop'); })
+                        .appendTo(sliderControlContainer)
+                );
+                
+                if(settings.a11y.controls.pause) {
+                  $('<span/>').addClass(settings.a11y.className).html(settings.a11y.controls.pause).prependTo($slider.data('pause-control'));
+                }          
+
+              }//end pause button insertion
+            
+            //add play button
+            if(settings.auto.controls.play) {
+              
+              $slider.data('play-control', $('<button/>')
+                        .addClass(settings.cssPrefix + 'control')
+                        .addClass(settings.cssPrefix + 'play')
+                        .html(settings.auto.controls.play)
+                        .click(function() {$slider.trigger('stop'); })
+                        .appendTo(sliderControlContainer)
+                );
+                
+                if(settings.a11y.controls.play) {
+                  $('<span/>').addClass(settings.a11y.className).html(settings.a11y.controls.play).prependTo($slider.data('play-control'));
+                } 
+
+            } //end play button insertion
+
+        } //end if auto.enabled;
 
       // setup animation
       if(settings.auto.enabled) {
@@ -425,8 +457,21 @@ if (!Function.prototype.bind) {
           if(!settings.auto.enabled) {
             return;
           }
+
+
           var $slider = $(this),
               callback = forward_func($slider);
+
+            //Slider is playing, so highlight play button
+            if($slider.data('play-control')) {
+              $slider.data('play-control').attr('title', settings.auto.controls.tooltip.playing).addClass('active');
+            }
+
+            //Lowlight pause button
+            if($slider.data('pause-control')) {
+              $slider.data('pause-control').attr('title', settings.auto.controls.tooltip.pause).removeClass('active');
+            }
+            
 
           if('function' == typeof settings.forwardCallback) {
             callback = settings.forwardCallback.bind($slider, callback);
@@ -437,10 +482,22 @@ if (!Function.prototype.bind) {
           clearTimeout($slider.data('timeout'));
           $(this).data('timeout', setInterval(callback, settings.auto.timeout));
 
+            
         });
 
         $slider.bind('stop', function(e) {
           clearTimeout($(this).data('timeout'));
+
+            //Slider is paused, lowlight play button
+            if($slider.data('play-control')) {
+              $slider.data('play-control').attr('title', settings.auto.controls.tooltip.play).removeClass('active');
+            }
+
+            //Highlight pause button
+            if($slider.data('pause-control')) {
+              $slider.data('pause-control').attr('title', settings.auto.controls.tooltip.paused).addClass('active');
+            }
+
         });
 
         var start = function(e) { $slider.trigger('start'); },

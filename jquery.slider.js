@@ -304,6 +304,9 @@ if (!Function.prototype.bind) {
       $slider.data('positions',           positions);
       $slider.data('items-per-position',  itemsPerPosition);
 
+      //Declare slider control container
+      var sliderControlContainer;
+
       // Set slider-active class on active item(s)
       setActiveClass($slider);
 
@@ -366,8 +369,7 @@ if (!Function.prototype.bind) {
         }
 
         if(settings.controls.item || settings.auto.enabled) {
-           var sliderControlContainer = $('<div>').addClass('slider-controls');
-           sliderControlContainer.insertAfter($slider);
+           sliderControlContainer = $('<div>').addClass('slider-controls').insertAfter($slider);
         }
 
         // Add item buttons
@@ -410,7 +412,7 @@ if (!Function.prototype.bind) {
             position++;
           }
 
-          itemControlContainer.appendTo(sliderControlContainer)
+          itemControlContainer.appendTo(sliderControlContainer);
           $slider.data('buttons', itemControlContainer);
           $('.' + settings.cssPrefix + 'goto-' + settings.startIndex)
             .addClass('active');

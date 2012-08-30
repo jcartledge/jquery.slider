@@ -446,7 +446,7 @@ if (!Function.prototype.bind) {
             .addClass(settings.cssPrefix + 'control')
             .addClass(settings.cssPrefix + 'play')
             .html(settings.auto.controls.play)
-            .click(function() {$slider.trigger('stop'); })
+            .click(function() {$slider.trigger('start'); })
             .appendTo(sliderControlContainer)
           );
 

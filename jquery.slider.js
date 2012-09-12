@@ -292,6 +292,12 @@ if (!Function.prototype.bind) {
           itemsPerPosition = $slider.data('items-per-position') || settings.itemsPerPosition,
           positions = Math.ceil($slider.find(settings.itemSelector).length / itemsPerPosition);
 
+      //If there are no items, skip setting up the rest of the slider since it's blank. Bad slider, no biscuit for you!
+      if($slider.find(settings.itemSelector).length <=0) {
+        // Continue to next slider by returning non-false.
+        return true;
+      }
+
       // Add a class to all sliders - makes it easy to remove them en masse.
       $slider.addClass(settings.cssPrefix + 'slider');
 
